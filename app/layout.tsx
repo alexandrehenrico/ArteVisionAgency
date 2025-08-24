@@ -20,9 +20,9 @@ export default function RootLayout({
     <html lang="en">
 <head>
   {/* Favicon */}
-<link rel="icon" type="image/png" sizes="32x32" href="/ArteVision.png" />
-<link rel="icon" type="image/png" sizes="16x16" href="/ArteVision.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="/ArteVision.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="https://i.imgur.com/fy7RgKT.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://i.imgur.com/fy7RgKT.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="https://i.imgur.com/fy7RgKT.png" />
 
   {/* Fontes */}
   <style>{`
