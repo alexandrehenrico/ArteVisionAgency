@@ -89,7 +89,7 @@ export function RegisterForm() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Image src="/Alexandre.png" alt="ArteVision Logo" width={200} height={60} className="h-12 w-auto" />
+            <Image src="https://i.imgur.com/QsZcpVF.png" alt="ArteVision Logo" width={200} height={60} className="h-12 w-auto" />
           </div>
           <CardTitle className="text-2xl">Cadastro</CardTitle>
           <CardDescription>Crie sua conta no Sistema de Gestão Interno Arte Vision Agency</CardDescription>
