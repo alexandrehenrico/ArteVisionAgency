@@ -18,15 +18,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <style>{`
+<head>
+  {/* Favicon */}
+<link rel="icon" type="image/png" sizes="32x32" href="/ArteVision.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/ArteVision.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/ArteVision.png" />
+
+  {/* Fontes */}
+  <style>{`
 html {
   font-family: ${GeistSans.style.fontFamily};
   --font-sans: ${GeistSans.variable};
   --font-mono: ${GeistMono.variable};
 }
-        `}</style>
-      </head>
+  `}</style>
+</head>
       <body>
         <AuthProvider>{children}</AuthProvider>
       </body>
