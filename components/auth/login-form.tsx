@@ -46,7 +46,7 @@ export function LoginForm() {
         <CardHeader className="relative text-center z-10">
           <div className="flex justify-center mb-4">
             <Image
-              src="/Alexandre.png"
+              src="https://i.imgur.com/QsZcpVF.png"
               alt="ArteVision Logo"
               width={200}
               height={60}
