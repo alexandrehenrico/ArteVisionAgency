@@ -71,7 +71,7 @@ export function Sidebar() {
           {/* Logo e título */}
           <div className="relative flex flex-col items-center justify-center px-4 py-6 border-b border-blue-200 z-10">
             <Image 
-              src="/Alexandre.png" 
+              src="https://i.imgur.com/QsZcpVF.png" 
               alt="ArteVision Logo"
               width={120} 
               height={120}
