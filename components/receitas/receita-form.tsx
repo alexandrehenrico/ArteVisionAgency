@@ -55,7 +55,7 @@ export function ReceitaForm({ onReceitaAdicionada }: ReceitaFormProps) {
     try {
       const receitaData: any = {
         descricao: formData.descricao,
-        valor: Number.parseFloat(formData.valor),
+        valor: parseFloat(formData.valor.replace(',', '.')),
         categoria: formData.categoria,
         data: new Date(formData.data),
       }
@@ -92,9 +92,10 @@ export function ReceitaForm({ onReceitaAdicionada }: ReceitaFormProps) {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     })
   }
 

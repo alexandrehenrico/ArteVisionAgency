@@ -175,7 +175,7 @@ export function ReciboForm({ onReciboAdicionado }: ReciboFormProps) {
         emailCliente: formData.emailCliente.trim() || undefined,
         telefoneCliente: formData.telefoneCliente.trim() || undefined,
         descricaoServico: formData.descricaoServico.trim(),
-        valorPago: Number.parseFloat(formData.valorPago),
+        valorPago: parseFloat(formData.valorPago.replace(',', '.')),
         formaPagamento: formData.formaPagamento,
         dataPagamento: new Date(formData.dataPagamento),
         dataVencimento: formData.dataVencimento ? new Date(formData.dataVencimento) : undefined,

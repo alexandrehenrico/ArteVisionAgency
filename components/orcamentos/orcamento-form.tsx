@@ -77,6 +77,16 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
       if (item.id === id) {
         const itemAtualizado = { ...item, [campo]: valor }
         if (campo === 'quantidade' || campo === 'valorUnitario') {
+          // Garantir que os valores sejam números válidos
+          const quantidade = typeof itemAtualizado.quantidade === 'string' 
+            ? parseFloat(itemAtualizado.quantidade.toString().replace(',', '.')) || 0
+            : itemAtualizado.quantidade || 0
+          const valorUnitario = typeof itemAtualizado.valorUnitario === 'string'
+            ? parseFloat(itemAtualizado.valorUnitario.toString().replace(',', '.')) || 0
+            : itemAtualizado.valorUnitario || 0
+          
+          itemAtualizado.quantidade = quantidade
+          itemAtualizado.valorUnitario = valorUnitario
           itemAtualizado.valorTotal = itemAtualizado.quantidade * itemAtualizado.valorUnitario
         }
         return itemAtualizado
@@ -134,7 +144,7 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
         descricao: formData.descricao,
         itens,
         subtotal,
-        desconto: formData.desconto,
+        desconto: parseFloat(formData.desconto.toString().replace(',', '.')) || 0,
         valorTotal,
         status: 'rascunho',
         dataVencimento: new Date(formData.dataVencimento),
@@ -174,12 +184,19 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  const { name, value, type } = e.target
-  setFormData({
-    ...formData,
-    [name]: type === "number" ? Number(value) : value,
-  })
-}
+    const { name, value, type } = e.target
+    let processedValue: any = value
+    
+    if (type === "number") {
+      // Para campos numéricos, manter como string até o momento do submit
+      processedValue = value
+    }
+    
+    setFormData({
+      ...formData,
+      [name]: processedValue,
+    })
+  }
 
 
   return (
@@ -358,7 +375,7 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-blue-900">Totais</h3>
             
-            <div className="grid gap-4 md:grid-cols-3">
+                  onChange={(e) => atualizarItem(item.id, 'quantidade', parseFloat(e.target.value) || 1)}
               <div className="space-y-2">
                 <Label htmlFor="desconto">Desconto (R$)</Label>
                 <Input
@@ -368,7 +385,7 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
                   step="0.01"
                   min="0"
                   value={formData.desconto}
-                  onChange={handleChange}
+                  onChange={(e) => atualizarItem(item.id, 'valorUnitario', parseFloat(e.target.value) || 0)}
                   placeholder="0,00"
                 />
               </div>

@@ -9,9 +9,13 @@ export const adicionarCliente = async (cliente: Omit<Cliente, "id">) => {
       throw new Error("Usuário não autenticado")
     }
 
+    // Garantir que a data seja válida
+    const dataRegistro = cliente.dataRegistro instanceof Date 
+      ? cliente.dataRegistro 
+      : new Date(cliente.dataRegistro)
     const docRef = await addDoc(collection(db, "clientes"), {
       ...cliente,
-      dataRegistro: Timestamp.fromDate(cliente.dataRegistro),
+      dataRegistro: Timestamp.fromDate(dataRegistro),
       registradoPor: auth.currentUser.displayName || auth.currentUser.email || "Usuário",
     })
     return docRef.id
@@ -41,7 +45,7 @@ export const obterClientes = async (): Promise<Cliente[]> => {
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      dataRegistro: doc.data().dataRegistro.toDate(),
+      dataRegistro: doc.data().dataRegistro?.toDate() || new Date(),
     })) as Cliente[]
   } catch (error) {
     console.error("Erro ao obter clientes:", error)
@@ -56,9 +60,17 @@ export const adicionarReceita = async (receita: Omit<Receita, "id">) => {
       throw new Error("Usuário não autenticado")
     }
 
+    // Garantir que valor e data sejam válidos
+    const valor = typeof receita.valor === 'string' 
+      ? parseFloat(receita.valor.replace(',', '.')) 
+      : receita.valor
+    const data = receita.data instanceof Date 
+      ? receita.data 
+      : new Date(receita.data)
     const docRef = await addDoc(collection(db, "receitas"), {
       ...receita,
-      data: Timestamp.fromDate(receita.data),
+      valor,
+      data: Timestamp.fromDate(data),
       registradoPor: auth.currentUser.displayName || auth.currentUser.email || "Usuário",
     })
     return docRef.id
@@ -88,7 +100,7 @@ export const obterReceitas = async (): Promise<Receita[]> => {
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      data: doc.data().data.toDate(),
+      data: doc.data().data?.toDate() || new Date(),
     })) as Receita[]
   } catch (error) {
     console.error("Erro ao obter receitas:", error)
@@ -103,9 +115,17 @@ export const adicionarDespesa = async (despesa: Omit<Despesa, "id">) => {
       throw new Error("Usuário não autenticado")
     }
 
+    // Garantir que valor e data sejam válidos
+    const valor = typeof despesa.valor === 'string' 
+      ? parseFloat(despesa.valor.replace(',', '.')) 
+      : despesa.valor
+    const data = despesa.data instanceof Date 
+      ? despesa.data 
+      : new Date(despesa.data)
     const docRef = await addDoc(collection(db, "despesas"), {
       ...despesa,
-      data: Timestamp.fromDate(despesa.data),
+      valor,
+      data: Timestamp.fromDate(data),
       registradoPor: auth.currentUser.displayName || auth.currentUser.email || "Usuário",
     })
     return docRef.id
@@ -135,7 +155,7 @@ export const obterDespesas = async (): Promise<Despesa[]> => {
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      data: doc.data().data.toDate(),
+      data: doc.data().data?.toDate() || new Date(),
     })) as Despesa[]
   } catch (error) {
     console.error("Erro ao obter despesas:", error)
@@ -150,9 +170,13 @@ export const adicionarSenha = async (senha: Omit<Senha, "id">) => {
       throw new Error("Usuário não autenticado")
     }
 
+    // Garantir que a data seja válida
+    const dataRegistro = senha.dataRegistro instanceof Date 
+      ? senha.dataRegistro 
+      : new Date(senha.dataRegistro)
     const docRef = await addDoc(collection(db, "senhas"), {
       ...senha,
-      dataRegistro: Timestamp.fromDate(senha.dataRegistro),
+      dataRegistro: Timestamp.fromDate(dataRegistro),
       registradoPor: auth.currentUser.displayName || auth.currentUser.email || "Usuário",
     })
     return docRef.id
@@ -174,7 +198,7 @@ export const obterSenhas = async (): Promise<Senha[]> => {
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      dataRegistro: doc.data().dataRegistro.toDate(),
+      dataRegistro: doc.data().dataRegistro?.toDate() || new Date(),
     })) as Senha[]
   } catch (error) {
     console.error("Erro ao obter senhas:", error)
@@ -189,11 +213,27 @@ export const adicionarProjeto = async (projeto: Omit<Projeto, "id">) => {
       throw new Error("Usuário não autenticado")
     }
 
+    // Garantir que as datas sejam válidas
+    const dataInicio = projeto.dataInicio instanceof Date 
+      ? projeto.dataInicio 
+      : new Date(projeto.dataInicio)
+    const dataPrevisao = projeto.dataPrevisao 
+      ? (projeto.dataPrevisao instanceof Date ? projeto.dataPrevisao : new Date(projeto.dataPrevisao))
+      : null
+    const dataEntrega = projeto.dataEntrega 
+      ? (projeto.dataEntrega instanceof Date ? projeto.dataEntrega : new Date(projeto.dataEntrega))
+      : null
+    
+    // Garantir que o valor seja um número válido
+    const valor = projeto.valor 
+      ? (typeof projeto.valor === 'string' ? parseFloat(projeto.valor.replace(',', '.')) : projeto.valor)
+      : undefined
     const docRef = await addDoc(collection(db, "projetos"), {
       ...projeto,
-      dataInicio: Timestamp.fromDate(projeto.dataInicio),
-      dataPrevisao: projeto.dataPrevisao ? Timestamp.fromDate(projeto.dataPrevisao) : null,
-      dataEntrega: projeto.dataEntrega ? Timestamp.fromDate(projeto.dataEntrega) : null,
+      valor,
+      dataInicio: Timestamp.fromDate(dataInicio),
+      dataPrevisao: dataPrevisao ? Timestamp.fromDate(dataPrevisao) : null,
+      dataEntrega: dataEntrega ? Timestamp.fromDate(dataEntrega) : null,
       registradoPor: auth.currentUser.displayName || auth.currentUser.email || "Usuário",
     })
     return docRef.id
@@ -215,9 +255,9 @@ export const obterProjetos = async (): Promise<Projeto[]> => {
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      dataInicio: doc.data().dataInicio.toDate(),
-      dataPrevisao: doc.data().dataPrevisao ? doc.data().dataPrevisao.toDate() : undefined,
-      dataEntrega: doc.data().dataEntrega ? doc.data().dataEntrega.toDate() : undefined,
+      dataInicio: doc.data().dataInicio?.toDate() || new Date(),
+      dataPrevisao: doc.data().dataPrevisao?.toDate() || undefined,
+      dataEntrega: doc.data().dataEntrega?.toDate() || undefined,
     })) as Projeto[]
   } catch (error) {
     console.error("Erro ao obter projetos:", error)
@@ -250,10 +290,17 @@ export const adicionarAtividadeProjeto = async (atividade: Omit<AtividadeProjeto
       throw new Error("Usuário não autenticado")
     }
 
+    // Garantir que as datas sejam válidas
+    const dataCriacao = atividade.dataCriacao instanceof Date 
+      ? atividade.dataCriacao 
+      : new Date(atividade.dataCriacao)
+    const dataConclusao = atividade.dataConclusao 
+      ? (atividade.dataConclusao instanceof Date ? atividade.dataConclusao : new Date(atividade.dataConclusao))
+      : null
     const docRef = await addDoc(collection(db, "atividades_projetos"), {
       ...atividade,
-      dataCriacao: Timestamp.fromDate(atividade.dataCriacao),
-      dataConclusao: atividade.dataConclusao ? Timestamp.fromDate(atividade.dataConclusao) : null,
+      dataCriacao: Timestamp.fromDate(dataCriacao),
+      dataConclusao: dataConclusao ? Timestamp.fromDate(dataConclusao) : null,
       registradoPor: auth.currentUser.displayName || auth.currentUser.email || "Usuário",
     })
     return docRef.id
@@ -279,8 +326,8 @@ export const obterAtividadesProjeto = async (projetoId: string): Promise<Ativida
       .map((doc) => ({
         id: doc.id,
         ...doc.data(),
-        dataCriacao: doc.data().dataCriacao.toDate(),
-        dataConclusao: doc.data().dataConclusao ? doc.data().dataConclusao.toDate() : undefined,
+        dataCriacao: doc.data().dataCriacao?.toDate() || new Date(),
+        dataConclusao: doc.data().dataConclusao?.toDate() || undefined,
       })) as AtividadeProjeto[]
     
     return atividades.filter(atividade => atividade.projetoId === projetoId)
@@ -316,10 +363,44 @@ export const adicionarOrcamento = async (orcamento: Omit<Orcamento, "id">) => {
       throw new Error("Usuário não autenticado")
     }
 
+    // Garantir que valores numéricos e datas sejam válidos
+    const subtotal = typeof orcamento.subtotal === 'string' 
+      ? parseFloat(orcamento.subtotal.replace(',', '.')) 
+      : orcamento.subtotal
+    const desconto = typeof orcamento.desconto === 'string' 
+      ? parseFloat(orcamento.desconto.replace(',', '.')) 
+      : orcamento.desconto
+    const valorTotal = typeof orcamento.valorTotal === 'string' 
+      ? parseFloat(orcamento.valorTotal.replace(',', '.')) 
+      : orcamento.valorTotal
+    const dataCriacao = orcamento.dataCriacao instanceof Date 
+      ? orcamento.dataCriacao 
+      : new Date(orcamento.dataCriacao)
+    const dataVencimento = orcamento.dataVencimento instanceof Date 
+      ? orcamento.dataVencimento 
+      : new Date(orcamento.dataVencimento)
+    
+    // Processar itens para garantir valores numéricos corretos
+    const itensProcessados = orcamento.itens.map(item => ({
+      ...item,
+      quantidade: typeof item.quantidade === 'string' 
+        ? parseFloat(item.quantidade.replace(',', '.')) 
+        : item.quantidade,
+      valorUnitario: typeof item.valorUnitario === 'string' 
+        ? parseFloat(item.valorUnitario.replace(',', '.')) 
+        : item.valorUnitario,
+      valorTotal: typeof item.valorTotal === 'string' 
+        ? parseFloat(item.valorTotal.replace(',', '.')) 
+        : item.valorTotal,
+    }))
     const docRef = await addDoc(collection(db, "orcamentos"), {
       ...orcamento,
-      dataCriacao: Timestamp.fromDate(orcamento.dataCriacao),
-      dataVencimento: Timestamp.fromDate(orcamento.dataVencimento),
+      subtotal,
+      desconto,
+      valorTotal,
+      itens: itensProcessados,
+      dataCriacao: Timestamp.fromDate(dataCriacao),
+      dataVencimento: Timestamp.fromDate(dataVencimento),
       registradoPor: auth.currentUser.displayName || auth.currentUser.email || "Usuário",
     })
     return docRef.id
@@ -341,8 +422,8 @@ export const obterOrcamentos = async (): Promise<Orcamento[]> => {
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      dataCriacao: doc.data().dataCriacao.toDate(),
-      dataVencimento: doc.data().dataVencimento.toDate(),
+      dataCriacao: doc.data().dataCriacao?.toDate() || new Date(),
+      dataVencimento: doc.data().dataVencimento?.toDate() || new Date(),
     })) as Orcamento[]
   } catch (error) {
     console.error("Erro ao obter orçamentos:", error)
@@ -391,11 +472,25 @@ export const adicionarRecibo = async (recibo: Omit<Recibo, "id">) => {
       throw new Error("Usuário não autenticado")
     }
 
+    // Garantir que valor e datas sejam válidos
+    const valorPago = typeof recibo.valorPago === 'string' 
+      ? parseFloat(recibo.valorPago.replace(',', '.')) 
+      : recibo.valorPago
+    const dataPagamento = recibo.dataPagamento instanceof Date 
+      ? recibo.dataPagamento 
+      : new Date(recibo.dataPagamento)
+    const dataVencimento = recibo.dataVencimento 
+      ? (recibo.dataVencimento instanceof Date ? recibo.dataVencimento : new Date(recibo.dataVencimento))
+      : null
+    const dataCriacao = recibo.dataCriacao instanceof Date 
+      ? recibo.dataCriacao 
+      : new Date(recibo.dataCriacao)
     const docRef = await addDoc(collection(db, "recibos"), {
       ...recibo,
-      dataPagamento: Timestamp.fromDate(recibo.dataPagamento),
-      dataVencimento: recibo.dataVencimento ? Timestamp.fromDate(recibo.dataVencimento) : null,
-      dataCriacao: Timestamp.fromDate(recibo.dataCriacao),
+      valorPago,
+      dataPagamento: Timestamp.fromDate(dataPagamento),
+      dataVencimento: dataVencimento ? Timestamp.fromDate(dataVencimento) : null,
+      dataCriacao: Timestamp.fromDate(dataCriacao),
       registradoPor: auth.currentUser.displayName || auth.currentUser.email || "Usuário",
     })
     return docRef.id
@@ -425,9 +520,9 @@ export const obterRecibos = async (): Promise<Recibo[]> => {
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      dataPagamento: doc.data().dataPagamento.toDate(),
-      dataVencimento: doc.data().dataVencimento ? doc.data().dataVencimento.toDate() : undefined,
-      dataCriacao: doc.data().dataCriacao.toDate(),
+      dataPagamento: doc.data().dataPagamento?.toDate() || new Date(),
+      dataVencimento: doc.data().dataVencimento?.toDate() || undefined,
+      dataCriacao: doc.data().dataCriacao?.toDate() || new Date(),
     })) as Recibo[]
   } catch (error) {
     console.error("Erro ao obter recibos:", error)

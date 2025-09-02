@@ -58,7 +58,7 @@ export function ProjetoForm({ onProjetoAdicionado }: ProjetoFormProps) {
       }
 
       if (formData.valor) {
-        projetoData.valor = Number.parseFloat(formData.valor)
+        projetoData.valor = parseFloat(formData.valor.replace(',', '.'))
       }
 
       if (formData.dataPrevisao) {
@@ -96,9 +96,10 @@ export function ProjetoForm({ onProjetoAdicionado }: ProjetoFormProps) {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     })
   }
 
