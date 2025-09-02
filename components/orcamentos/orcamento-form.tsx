@@ -77,7 +77,6 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
       if (item.id === id) {
         const itemAtualizado = { ...item, [campo]: valor }
         if (campo === 'quantidade' || campo === 'valorUnitario') {
-          // Garantir que os valores sejam números válidos
           const quantidade = typeof itemAtualizado.quantidade === 'string' 
             ? parseFloat(itemAtualizado.quantidade.toString().replace(',', '.')) || 0
             : itemAtualizado.quantidade || 0
@@ -100,7 +99,7 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
   }
 
   const calcularTotal = () => {
-    return calcularSubtotal() - formData.desconto
+    return calcularSubtotal() - (parseFloat(formData.desconto.toString()) || 0)
   }
 
   const handleClienteChange = (clienteId: string) => {
@@ -157,7 +156,6 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
         description: "Orçamento foi criado com sucesso!",
       })
 
-      // Reset form
       setFormData({
         clienteId: "none",
         nomeCliente: "",
@@ -188,7 +186,6 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
     let processedValue: any = value
     
     if (type === "number") {
-      // Para campos numéricos, manter como string até o momento do submit
       processedValue = value
     }
     
@@ -197,7 +194,6 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
       [name]: processedValue,
     })
   }
-
 
   return (
     <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200 shadow-sm">
@@ -314,7 +310,7 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
             </div>
 
             <div className="space-y-3">
-              {itens.map((item, index) => (
+              {itens.map((item) => (
                 <Card key={item.id} className="p-4">
                   <div className="grid gap-4 md:grid-cols-12 items-end">
                     <div className="md:col-span-5 space-y-2">
@@ -374,32 +370,30 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
           {/* Totais */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-blue-900">Totais</h3>
-            
-                  onChange={(e) => atualizarItem(item.id, 'quantidade', parseFloat(e.target.value) || 1)}
-              <div className="space-y-2">
-                <Label htmlFor="desconto">Desconto (R$)</Label>
-                <Input
-                  id="desconto"
-                  name="desconto"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.desconto}
-                  onChange={(e) => atualizarItem(item.id, 'valorUnitario', parseFloat(e.target.value) || 0)}
-                  placeholder="0,00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="dataVencimento">Válido até *</Label>
-                <Input
-                  id="dataVencimento"
-                  name="dataVencimento"
-                  type="date"
-                  value={formData.dataVencimento}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="desconto">Desconto (R$)</Label>
+              <Input
+                id="desconto"
+                name="desconto"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.desconto}
+                onChange={handleChange}
+                placeholder="0,00"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="dataVencimento">Válido até *</Label>
+              <Input
+                id="dataVencimento"
+                name="dataVencimento"
+                type="date"
+                value={formData.dataVencimento}
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div className="flex justify-end space-y-2">
@@ -409,7 +403,7 @@ export function OrcamentoForm({ onOrcamentoAdicionado }: OrcamentoFormProps) {
                 </div>
                 {formData.desconto > 0 && (
                   <div className="text-sm text-muted-foreground">
-                    Desconto: -R$ {formData.desconto.toFixed(2)}
+                    Desconto: -R$ {parseFloat(formData.desconto.toString()).toFixed(2)}
                   </div>
                 )}
                 <div className="text-xl font-bold text-green-600">
